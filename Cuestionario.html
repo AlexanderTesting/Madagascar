@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madagascar</title>
+    <style>
+        body {
+            background-color: #4CAF50;
+            font-family: Arial, sans-serif;
+            background-image: url('Selva.gif');
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .quiz-container {
+            max-width: 400px;
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        h1, .question {
+            color: #000;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .options {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 10px;
+        }
+
+        .answer-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            background-color: #79b9a9;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .answer-btn:hover {
+            background-color: #51877c;
+        }
+
+        .correct {
+            background-color: #4caf50;
+        }
+
+        .incorrect {
+            background-color: #f44336;
+        }
+
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .timer-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .timer-icon {
+            margin-right: 5px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="timer-container">
+            <span class="timer-icon">⏳</span>
+            <span id="timer">10</span>
+        </div>
+        <h1 style="color: #000;">¿Que tanto sabes sobre Madagascar?</h1>
+        <div id="quiz"></div>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        var questAmount = 2;
+        var questions = [
+            {
+                question: "¿Quienes colonizaron Madagascar?",
+                options: ["Españoles", "Franceses", "Ingleses", "Asiáticos"],
+                answer: "Asiáticos",
+                used: false
+            },
+            {
+                question: "¿Qué animal es sagrado en Madagascar?",
+                options: ["Lemur", "Camaleón", "León","La Boa"],
+                answer: "Lemur",
+                used: false
+            },
+            {
+                question: "¿Qué idiomas se hablan en Madagascar?",
+                options: ["Frances e Ingles", "Inglés y Malgache", "Francés y Malgache", "Español y Francés"],
+                answer: "Francés y Malgache",
+                used: false
+            },
+            {
+                question: "¿¿Qué océano rodea a Madagascar?",
+                options: ["Océano Pacifico", "Océano Ártico", "Oceano Indico", "Océano Atlántico"],
+                answer: "Oceano Indico",
+                used: false
+            },
+            {
+                question: "¿Cómo se llama la moneda de Madagascar?",
+                options: ["Ariary", "Dólar Malgache", "Euro","Dólar"],
+                answer: "Ariary",
+                used: false
+            },
+            {
+                question: "¿Cuál es la capital de Madagascar?",
+                options: ["Berlin", "Paris", "Toamasina", "Antananarivo"],
+                answer: "Antananarivo",
+                used: false
+            },
+            {
+                question: "¿Cuál es la comida más típica?",
+                options: ["Ceviche", "Ravioto", "Curry", "El gumbo"],
+                answer: "Ravioto",
+                used: false
+            },
+            {
+                question: "¿Cómo se le dice a alguien nativo de Madagascar?",
+                options: ["Madagascariense", "Madagascar", "Malgache","Madasqueño"],
+                answer: "Malgache",
+                used: false
+            },
+            {
+                question: "¿Cuál es el nombre real de Madagascar?",
+                options: ["Archipiélago de Madagascar", "República Malgache", "República de Madagascar", "Madagascar"],
+                answer: "República de Madagascar",
+                used: false
+            },
+            {
+                question: "¿Cuál es el árbol característico de Madagascar?",
+                options: ["El pino", "El Cedro", "La Acacia", "El Baobab"],
+                answer: "El Baobab",
+                used: false
+            },
+            {
+                question: "¿Cómo se dice “No” en Francés?",
+                options: ["Non", "No", "Ne", "Oui"],
+                answer: "Non",
+                used: false
+            },
+            {
+                question: "¿Como se dice “Buenos dias” en Frances?",
+                options: ["Bonne nuit", "Bonsoir", "Salut", "Bonjour"],
+                answer: "Bonjour",
+                used: false
+            },
+            {
+                question: "¿Cómo se dice “¿Hola, cómo estás?” En Francés?",
+                options: ["Bonjour, comment ça va?", "Bonjour, quel âge as-tu?", "Bonjour, quelle heure est-il?", "Bonjour, où es-tu?"],
+                answer: "Bonjour, comment ça va?",
+                used: false
+            },
+            {
+                question: "¿Cómo se dice “Buenas noches” en Francés?",
+                options: ["Bonne nuit", "Bonne Chance", "Bon nuit", "Plus tard"],
+                answer: "Bonne nuit",
+                used: false
+            },            {
+                question: "¿Cómo se escribe el número 20 en Francés?",
+                options: ["Vingt", "Cinq", "Douze", "Deux-Dix"],
+                answer: "Vingt",
+                used: false
+            },
+            {
+                question: "¿Cómo se escribe el número 2 en Francés?",
+                options: ["Deux", "Do", "Douze", "Vingt"],
+                answer: "Deux",
+                used: false
+            },
+            {
+                question: "¿Cómo se escribe el número 6 en Francés?",
+                options: ["Ses", "Six", "Dix", "seize"],
+                answer: "Six",
+                used: false
+            },
+            {
+                question: "¿Cómo se escribe el número 5 en Francés?",
+                options: ["Cinq", "Cans", "Quinze", "Five"],
+                answer: "Cinq",
+                used: false
+            },            {
+                question: "¿En donde se sitúa la *mayor parte* de la película de Madagascar?",
+                options: ["Madagascar", "Nueva York", "Francia", "Honduras"],
+                answer: "Nueva York",
+                used: false
+            },
+            {
+                question: "¿Qué significa Bonjour en Español?",
+                options: ["Buenas noches", "Buen provecho", "Un gusto", "Buen dia"],
+                answer: "Buen dia",
+                used: false
+            },
+            // Resto de las preguntas aquí
+        ];
+
+        var quizContainer = document.getElementById("quiz");
+        var resultContainer = document.getElementById("result");
+        var timerElement = document.getElementById("timer");
+
+        var currentQuestionIndex = 0;
+        var correctAnswers = 0;
+        var selectedQuestions = [];
+
+        function selectRandomQuestions() {
+            while (selectedQuestions.length < questAmount) {
+                var randomIndex = Math.floor(Math.random() * questions.length);
+                var selectedQuestion = questions[randomIndex];
+                if (!selectedQuestion.used) {
+                    selectedQuestion.used = true;
+                    selectedQuestions.push(selectedQuestion);
+                }
+            }
+        }
+
+        function showNextQuestion() {
+            if (currentQuestionIndex < selectedQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showQuestion() {
+            var question = selectedQuestions[currentQuestionIndex];
+
+            quizContainer.innerHTML = `
+                <h2 class="question">${question.question}</h2>
+                <ul class="options">
+                    ${question.options
+                        .map(
+                            (option, index) => `
+                                <li>
+                                    <button class="answer-btn" onclick="checkAnswer(this)" data-index="${index}">
+                                        ${option}
+                                    </button>
+                                </li>
+                            `
+                        )
+                        .join("")}
+                </ul>
+            `;
+
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 10;
+            timerElement.textContent = timeLeft;
+
+            timer = setInterval(function() {
+                timeLeft--;
+
+                if (timeLeft >= 0) {
+                    timerElement.textContent = timeLeft;
+                }
+
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    checkAnswer(null);
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(button) {
+            var selectedAnswer = button ? button.textContent.trim() : "";
+            var currentQuestion = selectedQuestions[currentQuestionIndex];
+
+            var buttons = quizContainer.querySelectorAll(".answer-btn");
+
+            buttons.forEach(function (btn) {
+                btn.disabled = true;
+                if (btn.textContent.trim() === currentQuestion.answer) {
+                    btn.classList.add("correct");
+                    if (btn !== button) {
+                        btn.classList.remove("incorrect");
+                    }
+                } else if (btn === button) {
+                    btn.classList.add("incorrect");
+                }
+            });
+
+            if (selectedAnswer === currentQuestion.answer) {
+                correctAnswers++;
+            }
+
+            clearInterval(timer);
+            setTimeout(showNextQuestion, 1000);
+        }
+
+        function showResult() {
+            quizContainer.style.display = "none";
+            resultContainer.textContent = `Sacaste ${correctAnswers} / ${questAmount}`;
+            resultContainer.style.display = "block";
+            // Ocultar el temporizador
+            timerElement.parentNode.style.display = "none";
+        }
+
+        selectRandomQuestions();
+        showQuestion();
+    </script>
+</body>
+</html>
