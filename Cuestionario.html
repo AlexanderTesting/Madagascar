@@ -103,6 +103,25 @@
                 transform: scale(1);
             }
         }
+
+        .start-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            background-color: #79b9a9;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .start-button:hover {
+            background-color: #51877c;
+        }
     </style>
 </head>
 <body>
@@ -112,8 +131,11 @@
             <span id="timer">10</span>
         </div>
         <h1 style="color: #000;">¡Trivia Francófona!</h1>
-        <div id="quiz"></div>
-        <div id="result" class="result"></div>
+        <div id="start-screen">
+            <button class="start-button" onclick="startQuiz()">Empezar</button>
+        </div>
+        <div id="quiz" style="display: none;"></div>
+        <div id="result" class="result" style="display: none;"></div>
     </div>
 
     <script>
@@ -243,6 +265,7 @@
         var quizContainer = document.getElementById("quiz");
         var resultContainer = document.getElementById("result");
         var timerElement = document.getElementById("timer");
+        var startScreen = document.getElementById("start-screen");
 
         var currentQuestionIndex = 0;
         var correctAnswers = 0;
@@ -257,6 +280,13 @@
                     selectedQuestions.push(selectedQuestion);
                 }
             }
+        }
+
+        function startQuiz() {
+            startScreen.style.display = "none";
+            quizContainer.style.display = "block";
+            selectRandomQuestions();
+            showQuestion();
         }
 
         function showNextQuestion() {
@@ -342,9 +372,6 @@
             // Ocultar el temporizador
             timerElement.parentNode.style.display = "none";
         }
-
-        selectRandomQuestions();
-        showQuestion();
     </script>
 </body>
 </html>
